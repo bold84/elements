@@ -124,29 +124,56 @@ set(ELEMENTS_HEADERS
    include/elements/window.hpp
 )
 
-if (APPLE)
-   set(ELEMENTS_HOST
-      host/macos/app.mm
-      host/macos/base_view.mm
-      host/macos/key.mm
-      host/macos/window.mm
-   )
-elseif (ELEMENTS_HOST_UI_LIBRARY STREQUAL "gtk")
-   set(ELEMENTS_HOST
-      host/linux/app.cpp
-      host/linux/base_view.cpp
-      host/linux/key.cpp
-      host/linux/window.cpp
-   )
-elseif (WIN32)
-   set(ELEMENTS_HOST
-      host/windows/utils.hpp
-      host/windows/app.cpp
-      host/windows/base_view.cpp
-      host/windows/key.cpp
-      host/windows/window.cpp
-   )
+if(ELEMENTS_HOST_UI_LIBRARY STREQUAL "gtk")
+  set(ELEMENTS_HOST
+    host/linux/app.cpp
+    host/linux/base_view.cpp
+    host/linux/key.cpp
+    host/linux/window.cpp
+  )
+elseif(ELEMENTS_HOST_UI_LIBRARY STREQUAL "cocoa")
+  set(ELEMENTS_HOST
+    host/macos/app.mm
+    host/macos/base_view.mm
+    host/macos/key.mm
+    host/macos/window.mm
+  )
+elseif(ELEMENTS_HOST_UI_LIBRARY STREQUAL "win32")
+  set(ELEMENTS_HOST
+    host/windows/utils.hpp
+    host/windows/app.cpp
+    host/windows/base_view.cpp
+    host/windows/key.cpp
+    host/windows/window.cpp
+  )
+else()
+  message( FATAL_ERROR "ELEMENTS_HOST_UI_LIBRARY has not been defined. CMake will exit." )
 endif()
+
+
+# if (APPLE)
+#    set(ELEMENTS_HOST
+#       host/macos/app.mm
+#       host/macos/base_view.mm
+#       host/macos/key.mm
+#       host/macos/window.mm
+#    )
+# elseif (ELEMENTS_HOST_UI_LIBRARY STREQUAL "gtk")
+#    set(ELEMENTS_HOST
+#       host/linux/app.cpp
+#       host/linux/base_view.cpp
+#       host/linux/key.cpp
+#       host/linux/window.cpp
+#    )
+# elseif (WIN32)
+#    set(ELEMENTS_HOST
+#       host/windows/utils.hpp
+#       host/windows/app.cpp
+#       host/windows/base_view.cpp
+#       host/windows/key.cpp
+#       host/windows/window.cpp
+#    )
+# endif()
 
 source_group("Source Files\\elements"
    FILES
@@ -279,7 +306,7 @@ elseif (UNIX OR WIN32)
 endif()
 
 ###############################################################################
-# GTK (linux only)
+# GTK
 
 if (ELEMENTS_HOST_UI_LIBRARY STREQUAL "gtk")
    pkg_check_modules(GTK3 REQUIRED IMPORTED_TARGET gtk+-3.0)
@@ -293,12 +320,14 @@ target_include_directories(elements PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/
 ###############################################################################
 # Global options
 
-if (APPLE)
+if (ELEMENTS_HOST_UI_LIBRARY STREQUAL "cocoa")
    target_compile_definitions(elements PRIVATE
       ELEMENTS_CLASS_PREFIX=${ELEMENTS_CLASS_PREFIX}
    )
    target_compile_options(elements PUBLIC "-fobjc-arc")
-elseif (WIN32)
+endif()
+
+if (WIN32)
    target_compile_definitions(elements PUBLIC
       WIN32_LEAN_AND_MEAN
       NOMINMAX

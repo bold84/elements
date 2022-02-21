@@ -13,7 +13,8 @@
 #include <infra/filesystem.hpp>
 #include <infra/optional.hpp>
 
-#ifndef __APPLE__
+
+#if defined(ELEMENTS_HOST_UI_LIBRARY_GTK)
 # include <ft2build.h>
 # include <freetype/ttnameid.h>
 # include FT_SFNT_NAMES_H
@@ -22,12 +23,15 @@
 # include FT_OUTLINE_H
 # include FT_BBOX_H
 # include FT_TYPE1_TABLES_H
+#endif
+
 # if defined(ELEMENTS_HOST_UI_LIBRARY_WIN32)
 #  include <Windows.h>
 #  include "sysinfoapi.h"
 #  include "tchar.h"
 # endif
-#else
+
+#if defined(__APPLE__)
 # include <cairo-quartz.h>
 #endif
 
@@ -69,7 +73,7 @@ namespace cycfi { namespace elements
          return (a * (1.0 - f)) + (b * f);
       }
 
-#ifndef __APPLE__
+#ifndef ELEMENTS_HOST_UI_LIBRARY_COCOA
       auto const& cairo_user_data_key()
       {
          static const cairo_user_data_key_t key = {};
@@ -405,7 +409,7 @@ namespace cycfi { namespace elements
       {
          std::vector<fs::path> paths = font_paths();
 
-#ifdef __APPLE__
+#if defined(ELEMENTS_HOST_UI_LIBRARY_COCOA)
          paths.push_back(get_user_fonts_directory());
 #else
          if (paths.empty())

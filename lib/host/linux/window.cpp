@@ -39,7 +39,7 @@ namespace cycfi { namespace elements
       return 1.0f / gdk_window_get_scale_factor(gdk_win);
    }
 
-   window::window(std::string const& name, int style_, rect const& bounds)
+   window::window(std::string const& name, [[maybe_unused]] int style_, rect const& bounds)
     :  _window(new host_window)
    {
       // Chicken and egg. GTK wants us to create windows only
@@ -49,7 +49,7 @@ namespace cycfi { namespace elements
       // immediately.
 
       auto make_window =
-         [this, name, style_, bounds]()
+         [this, name, /*style_,*/ bounds]()
          {
             GtkWidget* win = gtk_application_window_new(get_app());
             g_object_ref(win);
