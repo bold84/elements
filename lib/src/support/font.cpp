@@ -485,7 +485,7 @@ namespace cycfi { namespace elements
          return nullptr;
       }
 
-#ifndef __APPLE__
+#ifndef ELEMENTS_HOST_UI_LIBRARY_COCOA
       class free_type_face
       {
       public:
@@ -634,7 +634,7 @@ namespace cycfi { namespace elements
 
    font::font(font_descr descr)
    {
-#ifndef __APPLE__
+#ifndef ELEMENTS_HOST_UI_LIBRARY_COCOA
       static free_type_library ft_lib;
 #endif
 
@@ -649,7 +649,7 @@ namespace cycfi { namespace elements
          }
          else
          {
-#ifdef __APPLE__
+#ifdef ELEMENTS_HOST_UI_LIBRARY_COCOA
 
             auto cfstr = CFStringCreateWithCString(
                kCFAllocatorDefault
